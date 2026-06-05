@@ -16,7 +16,7 @@
     </Design.DataContext>
 
     <StackPanel Margin="20" Spacing="15" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBox Text="{Binding TargetPassword, Mode=OneWay}"
+        <TextBox Text="{Binding HashedPassword, Mode=OneWay}"
                  PlaceholderText="Your generated password will appear here"
                  IsReadOnly="True"
                  Width="300"
