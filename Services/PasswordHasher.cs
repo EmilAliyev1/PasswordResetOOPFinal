@@ -10,7 +10,7 @@ public static class PasswordHasher
 
     public static string Hash(string password)
     {
-        if (password == null)
+        if (string.IsNullOrEmpty(password))
             throw new ArgumentNullException(nameof(password));
 
         string combinedInput = password + Salt;

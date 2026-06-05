@@ -21,7 +21,7 @@ public class SingleThreadCracker : IBruteForceCracker
 
     public async Task<string?> CrackAsync(string targetHash)
     {
-        if (targetHash == null)
+        if (string.IsNullOrEmpty(targetHash))
             throw new ArgumentException(nameof(targetHash));
 
         long totalChecked = 0;

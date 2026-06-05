@@ -8,3 +8,5 @@ obj/
 *.user
 *.suo
 *.shellmnt
+
+performance_log.txt

@@ -42,10 +42,9 @@ public partial class MainWindowViewModel : ViewModelBase
 
         HashedPassword = PasswordHasher.Hash(plainPassword);
 
-        string? decryptedPassword = await _multiThreadCracker.CrackAsync(HashedPassword);
+        await _singleThreadCracker.CrackAsync(HashedPassword);
+        await _multiThreadCracker.CrackAsync(HashedPassword);
 
-        Console.WriteLine($"The plain password: {decryptedPassword}");
-        Console.WriteLine($"The amount of time it took: {_multiThreadCracker.ElapsedTime.TotalSeconds:F2}");
-        Console.WriteLine($"The amount of combinations: {_multiThreadCracker.CheckedCombinationsCount:N0}");
+        PerformanceLogger.LogPerformance(TargetPassword, _singleThreadCracker.ElapsedTime, _multiThreadCracker.ElapsedTime);
     }
 }
