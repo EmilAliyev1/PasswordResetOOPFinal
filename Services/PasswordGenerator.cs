@@ -15,7 +15,7 @@ public class PasswordGenerator
     
     public string GenerateTargetPassword()
     {
-        int passwordLength = _random.Next(4, 7);
+        int passwordLength = _random.Next(4, 6);
 
         StringBuilder passwordBuilder = new StringBuilder(passwordLength);
 
