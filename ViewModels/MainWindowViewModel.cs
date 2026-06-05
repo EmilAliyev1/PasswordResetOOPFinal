@@ -8,7 +8,7 @@ namespace PasswordReset.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly PasswordGenerator _passwordGenerator;
-    private readonly BruteForceGenerator _bruteForceGenerator;
+    private readonly SingleThreadCracker _singleThreadCracker;
     private string? _targetPassword;
     private string? _hashedPassword;
     public string? TargetPassword
@@ -27,7 +27,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         _passwordGenerator = new PasswordGenerator();
-        _bruteForceGenerator = new BruteForceGenerator();
+        _singleThreadCracker = new SingleThreadCracker();
 
         GenerateRandomPasswordCommand = new RelayCommand(GenerateRandomPassword);
     }
@@ -40,13 +40,9 @@ public partial class MainWindowViewModel : ViewModelBase
 
         HashedPassword = PasswordHasher.Hash(plainPassword);
 
-        foreach (string candidate in _bruteForceGenerator.GenerateCombinations())
-        {
-            if (PasswordValidator.Validate(candidate, HashedPassword))
-            {
-                Console.WriteLine($"BruteForce successful! The password is: {candidate}");
-                break;
-            }
-        }
+        _singleThreadCracker.Crack(HashedPassword);
+
+        Console.WriteLine($"The amount of time it took: {_singleThreadCracker.ElapsedTime.TotalSeconds:F2}");
+        Console.WriteLine($"The amount of combinations: {_singleThreadCracker.CheckedCombinationsCount:N0}");
     }
 }

@@ -1,5 +1,6 @@
 using PasswordReset.Interfaces;
 using System;
+using System.Diagnostics;
 
 namespace PasswordReset.Services;
 
@@ -18,6 +19,30 @@ public class SingleThreadCracker : IBruteForceCracker
 
     public string? Crack(string targetHash)
     {
-        throw new NotImplementedException();
+        if (targetHash == null)
+            throw new ArgumentException(nameof(targetHash));
+
+        CheckedCombinationsCount = 0;
+        ElapsedTime = TimeSpan.Zero;
+
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        try
+        {
+            foreach (string candidate in _bruteForceGenerator.GenerateCombinations())
+            {
+                CheckedCombinationsCount++;
+
+                if (PasswordValidator.Validate(candidate, targetHash))
+                    return candidate;
+            }
+
+            return null;
+        }
+        finally
+        {
+            stopwatch.Stop();
+            ElapsedTime = stopwatch.Elapsed;
+        }
     }
 }
