@@ -1,5 +1,6 @@
 using PasswordReset.Interfaces;
 using System;
+using System.Threading.Tasks;
 
 namespace PasswordReset.Services;
 
@@ -16,7 +17,8 @@ public class MultiThreadCracker : IBruteForceCracker
         _bruteForceGenerator = new BruteForceGenerator();
     }
 
-    public string? Crack(string targetHash) {
+    public async Task<string?> CrackAsync(string targetHash)
+    {
         throw new NotImplementedException();
     }
 }

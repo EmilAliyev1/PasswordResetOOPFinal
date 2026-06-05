@@ -1,6 +1,8 @@
 using PasswordReset.Interfaces;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace PasswordReset.Services;
 
@@ -17,32 +19,36 @@ public class SingleThreadCracker : IBruteForceCracker
         _bruteForceGenerator = new BruteForceGenerator();
     }
 
-    public string? Crack(string targetHash)
+    public async Task<string?> CrackAsync(string targetHash)
     {
         if (targetHash == null)
             throw new ArgumentException(nameof(targetHash));
 
-        CheckedCombinationsCount = 0;
+        long totalChecked = 0;
         ElapsedTime = TimeSpan.Zero;
 
         Stopwatch stopwatch = Stopwatch.StartNew();
 
         try
         {
-            foreach (string candidate in _bruteForceGenerator.GenerateCombinations())
+            return await Task.Run(() =>
             {
-                CheckedCombinationsCount++;
+                foreach (string candidate in _bruteForceGenerator.GenerateCombinations())
+                {
+                    Interlocked.Increment(ref totalChecked);
 
-                if (PasswordValidator.Validate(candidate, targetHash))
-                    return candidate;
-            }
+                    if (PasswordValidator.Validate(candidate, targetHash))
+                        return candidate;
+                }
 
-            return null;
+                return null;
+            });
         }
         finally
         {
             stopwatch.Stop();
             ElapsedTime = stopwatch.Elapsed;
+            CheckedCombinationsCount = totalChecked;
         }
     }
 }

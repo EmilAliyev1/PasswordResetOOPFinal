@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using PasswordReset.Services;
@@ -9,6 +10,7 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly PasswordGenerator _passwordGenerator;
     private readonly SingleThreadCracker _singleThreadCracker;
+    private readonly MultiThreadCracker _multiThreadCracker;
     private string? _targetPassword;
     private string? _hashedPassword;
     public string? TargetPassword
@@ -28,20 +30,21 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         _passwordGenerator = new PasswordGenerator();
         _singleThreadCracker = new SingleThreadCracker();
+        _multiThreadCracker = new MultiThreadCracker();
 
         GenerateRandomPasswordCommand = new RelayCommand(GenerateRandomPassword);
     }
 
-    private void GenerateRandomPassword()
+    private async void GenerateRandomPassword()
     {
         string plainPassword = _passwordGenerator.GenerateTargetPassword();
         TargetPassword = plainPassword;
-        Console.WriteLine(TargetPassword);
 
         HashedPassword = PasswordHasher.Hash(plainPassword);
 
-        _singleThreadCracker.Crack(HashedPassword);
+        string? decryptedPassword = await _singleThreadCracker.CrackAsync(HashedPassword);
 
+        Console.WriteLine($"The plain password: {decryptedPassword}");
         Console.WriteLine($"The amount of time it took: {_singleThreadCracker.ElapsedTime.TotalSeconds:F2}");
         Console.WriteLine($"The amount of combinations: {_singleThreadCracker.CheckedCombinationsCount:N0}");
     }
