@@ -11,10 +11,21 @@
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <StackPanel Margin="20" Spacing="15" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBox Text="{Binding TargetPassword, Mode=OneWay}"
+                 PlaceholderText="Your generated password will appear here"
+                 IsReadOnly="True"
+                 Width="300"
+                 HorizontalContentAlignment="Center"/>
 
+        <Button Content="Generate Password"
+                Command="{Binding GenerateRandomPasswordCommand}"
+                HorizontalAlignment="Center"
+                Padding="10"
+                Classes="accent"/>
+    </StackPanel>
 </Window>
