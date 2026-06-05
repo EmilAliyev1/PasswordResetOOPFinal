@@ -19,7 +19,7 @@ public class SingleThreadCracker : IBruteForceCracker
         _bruteForceGenerator = new BruteForceGenerator();
     }
 
-    public async Task<string?> CrackAsync(string targetHash)
+    public async Task<string?> CrackAsync(string targetHash, CancellationToken ct)
     {
         if (string.IsNullOrEmpty(targetHash))
             throw new ArgumentException(nameof(targetHash));
@@ -35,6 +35,9 @@ public class SingleThreadCracker : IBruteForceCracker
             {
                 foreach (string candidate in _bruteForceGenerator.GenerateCombinations())
                 {
+                    if (ct.IsCancellationRequested)
+                        break;
+
                     Interlocked.Increment(ref totalChecked);
 
                     if (PasswordValidator.Validate(candidate, targetHash))

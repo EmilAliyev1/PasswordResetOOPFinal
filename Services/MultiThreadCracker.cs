@@ -19,7 +19,7 @@ public class MultiThreadCracker : IBruteForceCracker
         _bruteForceGenerator = new BruteForceGenerator();
     }
 
-    public async Task<string?> CrackAsync(string targetHash)
+    public async Task<string?> CrackAsync(string targetHash, CancellationToken ct)
     {
         if (string.IsNullOrEmpty(targetHash))
             throw new ArgumentException(nameof(targetHash));
@@ -30,12 +30,10 @@ public class MultiThreadCracker : IBruteForceCracker
 
         int workerCount = Math.Max(1, Environment.ProcessorCount - 1);
 
-        using CancellationTokenSource cts = new CancellationTokenSource();
-
         ParallelOptions options = new ParallelOptions
         {
             MaxDegreeOfParallelism = workerCount,
-            CancellationToken = cts.Token
+            CancellationToken = ct
         };
 
         Stopwatch stopwatch = Stopwatch.StartNew();
@@ -51,11 +49,10 @@ public class MultiThreadCracker : IBruteForceCracker
                     if (PasswordValidator.Validate(candidate, targetHash))
                     {
                         Interlocked.CompareExchange(ref discoveredPassword, candidate, null);
-                        cts.Cancel();
                         state.Stop();
                     }
                 });
-            });
+            }, ct);
         }
         // catch the exception from cts.Cancel() and do nothing so that the program does not crash
         catch (OperationCanceledException) { }

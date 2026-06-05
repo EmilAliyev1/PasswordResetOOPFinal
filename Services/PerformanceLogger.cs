@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using PasswordReset.Models;
 
 namespace PasswordReset.Services;
 
@@ -8,19 +9,17 @@ public static class PerformanceLogger
 {
     private const string LogFileName = "performance_log.txt";
 
-    public static void LogPerformance(string password, TimeSpan singleThreadTime, TimeSpan multiThreadTime)
+    public static void LogPerformance(BenchmarkResult result)
     {
-        if (string.IsNullOrEmpty(password))
-            throw new ArgumentException(nameof(password));
-
-        double speedup = multiThreadTime.TotalSeconds > 0 ? singleThreadTime.TotalSeconds / multiThreadTime.TotalSeconds : 1.0;
+        if (string.IsNullOrEmpty(result.Password))
+            throw new ArgumentException(nameof(result.Password));
 
         StringBuilder logEntry = new StringBuilder();
         logEntry.AppendLine($"Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-        logEntry.AppendLine($"Password: {password}");
-        logEntry.AppendLine($"Single: {singleThreadTime.TotalSeconds:F2} sec");
-        logEntry.AppendLine($"Multi : {multiThreadTime.TotalSeconds:F2} sec");
-        logEntry.AppendLine($"Speedup: {speedup:F2}x");
+        logEntry.AppendLine($"Password: {result.Password}");
+        logEntry.AppendLine($"Single: {result.SingleThreadTime.TotalSeconds:F2} sec");
+        logEntry.AppendLine($"Multi : {result.MultiThreadTime.TotalSeconds:F2} sec");
+        logEntry.AppendLine($"Speedup: {result.Speedup:F2}x");
         logEntry.AppendLine(new string('-', 40));
 
         try
