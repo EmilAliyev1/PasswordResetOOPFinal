@@ -5,7 +5,7 @@ namespace PasswordReset.Services;
 
 public class PasswordGenerator
 {
-    private const string LowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+    private const string Alphabet = "abcdefghijklmnopqrstuvwxyz";
     private readonly Random _random;
 
     public PasswordGenerator()
@@ -21,8 +21,8 @@ public class PasswordGenerator
 
         for (int i = 0; i < passwordLength; i++)
         {
-            int randomIndex = _random.Next(LowercaseChars.Length);
-            passwordBuilder.Append(LowercaseChars[randomIndex]);
+            int randomIndex = _random.Next(Alphabet.Length);
+            passwordBuilder.Append(Alphabet[randomIndex]);
         }
 
         return passwordBuilder.ToString();
