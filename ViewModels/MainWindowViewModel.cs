@@ -8,6 +8,7 @@ namespace PasswordReset.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly PasswordGenerator _passwordGenerator;
+    private readonly BruteForceGenerator _bruteForceGenerator;
     private string? _targetPassword;
     private string? _hashedPassword;
     public string? TargetPassword
@@ -26,6 +27,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         _passwordGenerator = new PasswordGenerator();
+        _bruteForceGenerator = new BruteForceGenerator();
 
         GenerateRandomPasswordCommand = new RelayCommand(GenerateRandomPassword);
     }
@@ -34,13 +36,17 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         string plainPassword = _passwordGenerator.GenerateTargetPassword();
         TargetPassword = plainPassword;
+        Console.WriteLine(TargetPassword);
 
         HashedPassword = PasswordHasher.Hash(plainPassword);
 
-        string correctTargetHash = "185ee5f0dd3e66ea4ccc5232275e1eb7e9d313718e52d2f29ce74ed849149e54";
-
-        bool flag = PasswordValidator.Validate("test", correctTargetHash);
-
-        Console.WriteLine(flag);
+        foreach (string candidate in _bruteForceGenerator.GenerateCombinations())
+        {
+            if (PasswordValidator.Validate(candidate, HashedPassword))
+            {
+                Console.WriteLine($"BruteForce successful! The password is: {candidate}");
+                break;
+            }
+        }
     }
 }
