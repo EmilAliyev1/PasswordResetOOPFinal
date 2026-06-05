@@ -1,0 +1,10 @@
+.vs/
+
+[Dd]ebug/
+[Rr]elease/
+bin/
+obj/
+
+*.user
+*.suo
+*.shellmnt
