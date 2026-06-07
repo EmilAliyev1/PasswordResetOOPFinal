@@ -88,7 +88,7 @@ public partial class MainWindowViewModel : ViewModelBase
             if (multiResult != null && singleResult != null)
             {
                 FoundPassword = multiResult;
-                ElapsedTime = multiCracker.ElapsedTime.TotalSeconds > singleCracker.ElapsedTime.TotalSeconds
+                ElapsedTime = multiCracker.ElapsedTime.TotalSeconds < singleCracker.ElapsedTime.TotalSeconds
                     ? $"{multiCracker.ElapsedTime.TotalSeconds:F2}s (Multi-threaded)"
                     : $"{singleCracker.ElapsedTime.TotalSeconds:F2}s (Single-threaded)";
 
