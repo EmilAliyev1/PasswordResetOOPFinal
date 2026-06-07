@@ -24,6 +24,7 @@ public static class PerformanceLogger
 
         try
         {
+            // Add result to the end of the log file.
             File.AppendAllText(LogFileName, logEntry.ToString());
         }
         catch (IOException ex)

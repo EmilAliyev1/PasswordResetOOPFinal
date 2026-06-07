@@ -12,6 +12,7 @@ public static class PasswordValidator
         if (string.IsNullOrEmpty(targetHash))
             throw new ArgumentNullException(nameof(targetHash));
 
+        // Hash the guess the same way as the target password.
         string candidateHash = PasswordHasher.Hash(candidate);
 
         return string.Equals(candidateHash, targetHash, StringComparison.OrdinalIgnoreCase);

@@ -10,7 +10,7 @@ public class SingleThreadCracker : IBruteForceCracker
 {
     private readonly BruteForceGenerator _bruteForceGenerator;
 
-    // Properties to store the metrics of the cracking operation
+    // Results from the last cracking run.
     public TimeSpan ElapsedTime { get; private set; }
     public long CheckedCombinationsCount { get; private set; }
 
@@ -35,6 +35,7 @@ public class SingleThreadCracker : IBruteForceCracker
             {
                 foreach (string candidate in _bruteForceGenerator.GenerateCombinations())
                 {
+                    // Stop when the user cancels the attack.
                     if (ct.IsCancellationRequested)
                         break;
 
@@ -44,7 +45,7 @@ public class SingleThreadCracker : IBruteForceCracker
                         return candidate;
                 }
 
-                return null;
+                return null; // No matching password was found.
             });
         }
         finally

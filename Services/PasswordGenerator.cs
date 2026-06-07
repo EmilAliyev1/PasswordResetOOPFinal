@@ -13,6 +13,7 @@ public class PasswordGenerator
         _random = new Random();
     }
     
+    // Generate random password.
     public string GenerateTargetPassword()
     {
         int passwordLength = _random.Next(4, 6);

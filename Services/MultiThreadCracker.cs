@@ -9,8 +9,7 @@ namespace PasswordReset.Services;
 public class MultiThreadCracker : IBruteForceCracker
 {
     private readonly BruteForceGenerator _bruteForceGenerator;
-
-    // Properties to store the metrics of the cracking operation
+    // Results from the last cracking run.
     public TimeSpan ElapsedTime { get; private set; }
     public long CheckedCombinationsCount { get; private set; }
 
@@ -28,6 +27,7 @@ public class MultiThreadCracker : IBruteForceCracker
         ElapsedTime = TimeSpan.Zero;
         string? discoveredPassword = null;
 
+        // Keep one CPU core free so the UI can stay responsive.
         int workerCount = Math.Max(1, Environment.ProcessorCount - 1);
 
         ParallelOptions options = new ParallelOptions
@@ -42,19 +42,21 @@ public class MultiThreadCracker : IBruteForceCracker
         {
             await Task.Run(() =>
             {
+                // Check many generated passwords at the same time.
                 Parallel.ForEach(_bruteForceGenerator.GenerateCombinations(), options, (candidate, state) =>
                 {
                     Interlocked.Increment(ref totalChecked);
 
                     if (PasswordValidator.Validate(candidate, targetHash))
                     {
+                        // Only the first thread that found the password should save the password.
                         Interlocked.CompareExchange(ref discoveredPassword, candidate, null);
                         state.Stop();
                     }
                 });
             }, ct);
         }
-        // catch the exception from cts.Cancel() and do nothing so that the program does not crash
+        // Stop when the user cancels the attack.
         catch (OperationCanceledException) { }
         finally
         {

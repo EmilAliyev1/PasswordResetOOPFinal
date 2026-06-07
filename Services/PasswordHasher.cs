@@ -13,6 +13,7 @@ public static class PasswordHasher
         if (string.IsNullOrEmpty(password))
             throw new ArgumentNullException(nameof(password));
 
+        // Add the same salt every time so matching passwords create matching hashes.
         string combinedInput = password + Salt;
         byte[] inputBytes = Encoding.UTF8.GetBytes(combinedInput);
         byte[] hashBytes = SHA256.HashData(inputBytes);
@@ -20,6 +21,7 @@ public static class PasswordHasher
         StringBuilder builder = new StringBuilder();
 
         foreach (byte b in hashBytes)
+            // Convert each byte to two lowercase hex characters.
             builder.Append(b.ToString("x2"));
 
         return builder.ToString();

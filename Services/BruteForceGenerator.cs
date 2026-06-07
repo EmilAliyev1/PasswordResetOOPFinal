@@ -15,8 +15,10 @@ public class BruteForceGenerator
         {
             IEnumerable<string> combinations = [""];
 
+            // Build all words of the current length from the alphabet.
             combinations = Enumerable.Repeat(Alphabet, length).Aggregate(combinations, (acc, chars) => acc.SelectMany(word => chars, (word, ch) => word + ch));
 
+            // Yield one password at a time instead of storing everything in memory.
             foreach (string combination in combinations)
                 yield return combination;
         }
